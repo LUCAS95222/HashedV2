@@ -174,24 +174,24 @@ impl<'a> BetaInvitation<'a> {
   ) -> StdResult<Response> {
     // validations check
     if end_time <= start_time {
-      return Err(StdError::generic_err("end_time msut be larger than start_time"));
+      return Err(StdError::generic_err("end_time must be larger than start_time"));
     }
 
     if start_time < env.block.time.seconds() {
-      return Err(StdError::generic_err("start_time msut be smaller than current time"));
+      return Err(StdError::generic_err("start_time must be smaller than current time"));
     }
 
     if hard_cap <= soft_cap {
-      return Err(StdError::generic_err("hard_cap msut be larger than soft_cap"));
+      return Err(StdError::generic_err("hard_cap must be larger than soft_cap"));
     }
 
-    let mut gmae_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
+    let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
     for distribution in game_token_distributions.others.clone() {
-      gmae_token_distribution_sum = gmae_token_distribution_sum + distribution.amount;
+      game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
     }
 
     if let Some(total_supply) = game_token_info.total_supply {
-      if gmae_token_distribution_sum != total_supply {
+      if game_token_distribution_sum != total_supply {
         return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
       }
     } else {
@@ -443,7 +443,7 @@ impl<'a> BetaInvitation<'a> {
 
     invitation_info.sold_amount = invitation_info.sold_amount - refund_amount;
     
-    if user_state.bought_invitation_amount == 0 {
+    if user_state.bought_invitation_amount == 1 {
       self.user_states.remove(deps.storage, user_state_key)?;
     } else {
       self.user_states.save(deps.storage, user_state_key, &user_state)?;
