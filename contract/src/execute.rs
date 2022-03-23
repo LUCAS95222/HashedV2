@@ -443,7 +443,7 @@ impl<'a> BetaInvitation<'a> {
 
     invitation_info.sold_amount = invitation_info.sold_amount - refund_amount;
     
-    if user_state.bought_invitation_amount == 1 {
+    if user_state.bought_invitation_amount == 0 {
       self.user_states.remove(deps.storage, user_state_key)?;
     } else {
       self.user_states.save(deps.storage, user_state_key, &user_state)?;
