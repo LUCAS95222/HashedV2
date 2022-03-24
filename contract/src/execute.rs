@@ -359,11 +359,11 @@ impl<'a> BetaInvitation<'a> {
 
     let mut messages: Vec<CosmosMsg> = vec![];
 
+    if user_state.claimed == true {
+      return Err(StdError::generic_err("already refunded or claimed"));
+    }
     // if invitation is not passed refund main token
     if !passed {
-      if user_state.claimed == true {
-        return Err(StdError::generic_err("already refunded"));
-      }
 
       let refund_amount = Uint128::from(user_state.bought_invitation_amount) * invitation_info.invitation_price;
       let config = self.config.load(deps.storage)?;
@@ -376,7 +376,6 @@ impl<'a> BetaInvitation<'a> {
         funds: vec![]
       }));
 
-      user_state.claimed = true;
     // else mint fan token and transfer game token
     } else {
       let game_token_amount = invitation_info.game_token_distributions.invitation_buyer
@@ -399,6 +398,7 @@ impl<'a> BetaInvitation<'a> {
         funds: vec![]
       }));
     }
+    user_state.claimed = true;
 
     self.user_states.save(deps.storage, user_state_key, &user_state)?;
     
