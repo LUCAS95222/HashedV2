@@ -344,7 +344,7 @@ impl<'a> BetaInvitation<'a> {
       return Err(StdError::generic_err("invitation is not ended, can't claimed"));
     }
 
-    let passed = if invitation_info.soft_cap < invitation_info.sold_amount {
+    let passed = if invitation_info.sold_amount > invitation_info.soft_cap {
       true
     } else {
       false
@@ -479,6 +479,10 @@ impl<'a> BetaInvitation<'a> {
     }
     if invitation_info.main_token_distributed {
       return Err(StdError::generic_err("already distributed"));
+    }
+    
+    if invitation_info.sold_amount < invitation_info.soft_cap {
+      return Err(StdError::generic_err("sold amount is smaller than soft cap"));
     }
 
     let total_distribute_amount = invitation_info.invitation_price * Uint128::from(invitation_info.sold_amount);
