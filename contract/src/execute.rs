@@ -172,6 +172,13 @@ impl<'a> BetaInvitation<'a> {
     fan_token_info: Cw20Info,
     game_token_distributions: GameTokenDistributions,
   ) -> StdResult<Response> {
+
+    let config = self.config.load(deps.storage)?;
+    // only owner can register
+    if config.owner != info.sender {
+      return Err(StdError::generic_err("unauthorized"));
+    }
+
     // validations check
     if end_time <= start_time {
       return Err(StdError::generic_err("end_time must be larger than start_time"));
@@ -217,7 +224,7 @@ impl<'a> BetaInvitation<'a> {
     // save temp data
     self.temp_invitation_info.save(deps.storage, &temp_invitation_info)?;
 
-    let config = self.config.load(deps.storage)?;
+    //let config = self.config.load(deps.storage)?;
 
     Ok(Response::new()
       .add_attribute("action", "register_beta_invitation")
