@@ -192,15 +192,15 @@ impl<'a> BetaInvitation<'a> {
       return Err(StdError::generic_err("hard_cap must be larger than soft_cap"));
     }
 
-    let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
-    for distribution in game_token_distributions.others.clone() {
-      game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
-    }
+    //let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
+    //for distribution in game_token_distributions.others.clone() {
+    //  game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
+    //}
 
-    if let Some(total_supply) = game_token_info.total_supply {
-      if game_token_distribution_sum != total_supply {
-        return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
-      }
+    if let Some(_total_supply) = game_token_info.total_supply {
+      //if game_token_distribution_sum != total_supply {
+      //  return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
+      //}
     } else {
       return Err(StdError::generic_err("total_supply of game_token must be given"));
     }
