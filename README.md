@@ -59,5 +59,5 @@ snapshot.takeSnapshot(10000).then(delegators => {
 $ docker run --rm -v "$(pwd)":/code \
   --mount type=volume,source="devcontract_cache_airdrop",target=/code/contracts/airdrop/target \
   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
-  cosmwasm/rust-optimizer:0.10.2 ./contracts/airdrop
+  cosmwasm/rust-optimizer:0.12.5 ./contracts/airdrop
 ```
