@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "c2x_token",
+    "owner"
+  ],
+  "properties": {
+    "c2x_token": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    }
+  }
+}
