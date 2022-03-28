@@ -1,5 +1,5 @@
 [package]
-name = "com2us-beta-invitation"
+name = "beta-game-launcher"
 version = "0.0.1"
 authors = ["Andrew Song"]
 edition = "2018"
