@@ -185,22 +185,22 @@ impl<'a> BetaInvitation<'a> {
     }
 
     if start_time < env.block.time.seconds() {
-      return Err(StdError::generic_err("start_time must be smaller than current time"));
+      return Err(StdError::generic_err("start_time must be larger than current time"));
     }
 
     if hard_cap <= soft_cap {
       return Err(StdError::generic_err("hard_cap must be larger than soft_cap"));
     }
 
-    //let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
-    //for distribution in game_token_distributions.others.clone() {
-    //  game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
-    //}
+    let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
+    for distribution in game_token_distributions.others.clone() {
+      game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
+    }
 
-    if let Some(_total_supply) = game_token_info.total_supply {
-      //if game_token_distribution_sum != total_supply {
-      //  return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
-      //}
+    if let Some(total_supply) = game_token_info.total_supply {
+      if game_token_distribution_sum != total_supply {
+        return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
+      }
     } else {
       return Err(StdError::generic_err("total_supply of game_token must be given"));
     }
