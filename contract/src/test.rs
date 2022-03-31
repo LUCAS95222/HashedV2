@@ -97,6 +97,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 10,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 100,
     end_time: 200,
@@ -131,6 +132,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 10,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 300,
     end_time: 200,
@@ -161,6 +163,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 30,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 100,
     end_time: 200,
@@ -191,6 +194,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 10,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 100,
     end_time: 200,
@@ -221,6 +225,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 10,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 100,
     end_time: 200,
@@ -252,6 +257,7 @@ fn register_test() {
   let register_msg = ExecuteMsg::RegisterBetaInvitation {
     soft_cap: 10,
     hard_cap: 20,
+    user_cap: 10,
     invitation_price: Uint128::from(100u128),
     start_time: 100,
     end_time: 200,
@@ -283,6 +289,7 @@ fn register_test() {
     ExecuteMsg::RegisterBetaInvitation {
       soft_cap: _,
       hard_cap,
+      user_cap: 10,
       invitation_price: _,
       start_time: _,
       end_time: _,
@@ -352,6 +359,7 @@ fn register_test() {
       fan_token: Addr::unchecked("owner"),
       soft_cap: 10,
       hard_cap: 20,
+      user_cap: 10,
       sold_amount: 0,
       start_time:100,
       end_time: 200,

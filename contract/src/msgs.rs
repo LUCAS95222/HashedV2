@@ -35,6 +35,7 @@ pub enum ExecuteMsg {
   RegisterBetaInvitation {
     soft_cap: u64,
     hard_cap: u64,
+    user_cap: u64,
     invitation_price: Uint128,
     start_time: u64,
     end_time: u64,

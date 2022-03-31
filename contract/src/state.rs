@@ -64,6 +64,7 @@ pub struct InvitationInfo {
   pub fan_token: Addr,
   pub soft_cap: u64,
   pub hard_cap: u64,
+  pub user_cap: u64,
   pub sold_amount: u64,
   pub start_time: u64,
   pub end_time: u64,

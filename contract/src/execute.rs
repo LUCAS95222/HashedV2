@@ -58,6 +58,7 @@ impl<'a> BetaInvitation<'a> {
       ExecuteMsg::RegisterBetaInvitation {
         soft_cap,
         hard_cap,
+        user_cap,
         invitation_price,
         start_time,
         end_time,
@@ -70,6 +71,7 @@ impl<'a> BetaInvitation<'a> {
         info,
         soft_cap,
         hard_cap,
+        user_cap,
         invitation_price,
         start_time,
         end_time,
@@ -99,7 +101,7 @@ impl<'a> BetaInvitation<'a> {
     info: MessageInfo,
     cw20_msg: Cw20ReceiveMsg,
   ) -> StdResult<Response> {
-    let contract_addr = info.sender.clone();
+    let contract_addr = info.sender;
     let amount = cw20_msg.amount;
     let sender = deps.api.addr_validate(&cw20_msg.sender)?;
 
@@ -165,6 +167,7 @@ impl<'a> BetaInvitation<'a> {
     info: MessageInfo,
     soft_cap: u64,
     hard_cap: u64,
+    user_cap: u64,
     invitation_price: Uint128,
     start_time: u64,
     end_time: u64,
@@ -213,6 +216,7 @@ impl<'a> BetaInvitation<'a> {
       fan_token: info.sender.clone(),
       soft_cap,
       hard_cap,
+      user_cap,
       sold_amount: 0u64,
       start_time,
       end_time,
@@ -309,10 +313,23 @@ impl<'a> BetaInvitation<'a> {
       return Err(StdError::generic_err("invitation ended"));
     }
 
+
+
     if let Some(mut user_state) = user_state {
-      user_state.bought_invitation_amount = user_state.bought_invitation_amount + buy_amount;
+
+      let user_will_buy_amount = user_state.bought_invitation_amount + buy_amount;
+      if user_will_buy_amount > invitation_info.user_cap {
+        return Err(StdError::generic_err("purchase limit exceeded"));
+      }
+
+      user_state.bought_invitation_amount = user_will_buy_amount;
       self.user_states.save(deps.storage, user_state_key, &user_state)?;
     } else {
+
+      if buy_amount > invitation_info.user_cap {
+        return Err(StdError::generic_err("purchase limit exceeded"));
+      }
+
       let new_user_state = UserState {
         address: sender.clone(),
         game_token: game_token.clone(),
@@ -553,7 +570,7 @@ impl<'a> BetaInvitation<'a> {
         self.invitation_info.save(deps.storage, temp_invitation_info.game_token.clone(), &temp_invitation_info)?;
         Ok(Response::new())
       }
-      _ => return Err(StdError::generic_err("never_get_this"))
+      _ => Err(StdError::generic_err("never_get_this"))
     }
   }
 }
