@@ -155,6 +155,8 @@ impl<'a> BetaInvitation<'a> {
       config.main_token_distributions = main_token_distributions
     }
 
+    self.config.save(deps.storage, &config)?;
+
     Ok(Response::new()
       .add_attribute("action", "update_config")
     )
