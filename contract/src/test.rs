@@ -17,8 +17,8 @@ fn instantiate_test() {
   // case1. sum of rate < 1
   let mut instantiate_msg = InstantiateMsg {
     token_code_id: 123,
-    main_token: Addr::unchecked("main_token"),
-    owner: Addr::unchecked("owner"),
+    main_token: "main_token".to_string(),
+    owner: "owner".to_string(),
     main_token_distributions: vec![
       Distribution {
         address: Addr::unchecked("account_a"),
@@ -78,8 +78,8 @@ fn register_test() {
   // instantiate
   let instantiate_msg = InstantiateMsg {
     token_code_id: 123,
-    main_token: Addr::unchecked("main_token"),
-    owner: Addr::unchecked("owner"),
+    main_token: "main_token".to_string(),
+    owner: "owner".to_string(),
     main_token_distributions: vec![
       Distribution {
         address: Addr::unchecked("account_a"),
@@ -99,6 +99,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 100,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -134,6 +135,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 300,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -165,6 +167,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 100,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -196,6 +199,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 100,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -227,6 +231,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 100,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -259,6 +264,7 @@ fn register_test() {
     hard_cap: 20,
     user_cap: 10,
     invitation_price: Uint128::from(100u128),
+    invitation_price_decimals: 6,
     start_time: 100,
     end_time: 200,
     game_token_info: Cw20Info {
@@ -291,6 +297,7 @@ fn register_test() {
       hard_cap,
       user_cap: 10,
       invitation_price: _,
+      invitation_price_decimals: 0,
       start_time: _,
       end_time: _,
       game_token_distributions: _,
@@ -364,6 +371,7 @@ fn register_test() {
       start_time:100,
       end_time: 200,
       invitation_price: Uint128::from(100u128),
+      invitation_price_decimals: 0,
       game_token_distributions: GameTokenDistributions {
         invitation_buyer: Uint128::from(500u128),
         others: vec![

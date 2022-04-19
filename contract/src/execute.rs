@@ -17,9 +17,14 @@ impl<'a> BetaInvitation<'a> {
     _info: MessageInfo,
     msg: InstantiateMsg
   ) -> StdResult<Response> {
+
+    //Audit 7.
+    let owner = deps.api.addr_validate(&msg.owner)?;
+    let main_token = deps.api.addr_validate(&msg.main_token)?;
+
     let config = Config {
-      owner: msg.owner,
-      main_token: msg.main_token,
+      owner,
+      main_token,
       token_code_id: msg.token_code_id,
       main_token_distributions: msg.main_token_distributions.clone(),
     };
@@ -32,7 +37,7 @@ impl<'a> BetaInvitation<'a> {
     }
 
     if sum != Decimal::one() {
-      return Err(StdError::generic_err("sum of rate must be queal to 1"));
+      return Err(StdError::generic_err("sum of rate must be equal to 1"));
     }
 
     self.config.save(deps.storage, &config)?;
@@ -51,15 +56,15 @@ impl<'a> BetaInvitation<'a> {
       ExecuteMsg::Receive(msg) => self.receive_cw20(deps, env, info, msg),
       ExecuteMsg::UpdateConfig { 
         token_code_id,
-        main_token,
         owner,
         main_token_distributions
-      } => self.update_config(deps, env, info, token_code_id, main_token, owner, main_token_distributions),
+      } => self.update_config(deps, env, info, token_code_id, owner, main_token_distributions),
       ExecuteMsg::RegisterBetaInvitation {
         soft_cap,
         hard_cap,
         user_cap,
         invitation_price,
+        invitation_price_decimals,
         start_time,
         end_time,
         game_token_info,
@@ -73,6 +78,7 @@ impl<'a> BetaInvitation<'a> {
         hard_cap,
         user_cap,
         invitation_price,
+        invitation_price_decimals,
         start_time,
         end_time,
         game_token_info,
@@ -129,10 +135,10 @@ impl<'a> BetaInvitation<'a> {
     _env: Env,
     info: MessageInfo,
     token_code_id: Option<u64>,
-    main_token: Option<Addr>,
-    owner: Option<Addr>,
+    owner: Option<String>,
     main_token_distributions: Option<Vec<Distribution>>,
   ) -> StdResult<Response> {
+
     let mut config = self.config.load(deps.storage)?;
     // only owner can execute
     if config.owner != info.sender {
@@ -143,15 +149,27 @@ impl<'a> BetaInvitation<'a> {
       config.token_code_id = token_code_id
     }
 
-    if let Some(main_token) = main_token {
-      config.main_token = main_token
-    }
+    //Audit. 2
+    //removing the functionality to update the main token address
 
     if let Some(owner) = owner {
-      config.owner = owner
+      //Audit 7.
+      let owner_addr = deps.api.addr_validate(&owner)?;
+      config.owner = owner_addr
     }
 
     if let Some(main_token_distributions) = main_token_distributions {
+
+      //Audit. 4
+      //check rate sum
+      let mut sum = Decimal::zero();      
+      for distribution in main_token_distributions.clone() {
+        sum = sum + distribution.rate
+      }
+      if sum != Decimal::one() {
+        return Err(StdError::generic_err("sum of rate must be equal to 1"));
+      }
+
       config.main_token_distributions = main_token_distributions
     }
 
@@ -171,6 +189,7 @@ impl<'a> BetaInvitation<'a> {
     hard_cap: u64,
     user_cap: u64,
     invitation_price: Uint128,
+    invitation_price_decimals: u8,
     start_time: u64,
     end_time: u64,
     game_token_info: Cw20Info,
@@ -197,20 +216,25 @@ impl<'a> BetaInvitation<'a> {
       return Err(StdError::generic_err("hard_cap must be larger than soft_cap"));
     }
 
-    //let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
-    //for distribution in game_token_distributions.others.clone() {
-    //  game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
-    //}
+    let mut game_token_distribution_sum = game_token_distributions.invitation_buyer.clone();
+    for distribution in game_token_distributions.others.clone() {
+      game_token_distribution_sum = game_token_distribution_sum + distribution.amount;
+    }
 
-    if let Some(_total_supply) = game_token_info.total_supply {
-      //if game_token_distribution_sum != total_supply {
-      //  return Err(StdError::generic_err("distribution sum is not equal to total_supply"));
-      //}
+    if let Some(total_supply) = game_token_info.total_supply {
+      //Audit. 1
+      if game_token_distribution_sum > total_supply {
+        return Err(StdError::generic_err("distribution sum is bigger than total_supply"));
+      }
     } else {
       return Err(StdError::generic_err("total_supply of game_token must be given"));
     }
 
-
+    //Audit. 3
+    let main_token_decimals = self.query_decimals(&deps.querier, config.main_token.to_string())?;
+    if invitation_price_decimals != main_token_decimals {
+      return Err(StdError::generic_err("invitation_price_decimals must be equal to main token decimals"));
+    }
 
     let temp_invitation_info = InvitationInfo {
       // set all address to sender for temporary.
@@ -223,6 +247,7 @@ impl<'a> BetaInvitation<'a> {
       start_time,
       end_time,
       invitation_price,
+      invitation_price_decimals,
       game_token_distributions,
       main_token_distributed: false
     };
@@ -300,7 +325,7 @@ impl<'a> BetaInvitation<'a> {
 
     // check sent amount
     if invitation_info.invitation_price * Uint128::from(buy_amount) != main_token_amount {
-      return Err(StdError::generic_err("worng amount given"));
+      return Err(StdError::generic_err("wrong amount given"));
     }
 
     if invitation_info.hard_cap < invitation_info.sold_amount + buy_amount {
@@ -370,7 +395,8 @@ impl<'a> BetaInvitation<'a> {
       return Err(StdError::generic_err("invitation is not ended, can't claimed"));
     }
 
-    let passed = if invitation_info.sold_amount > invitation_info.soft_cap {
+    //Audit. 5
+    let passed = if invitation_info.sold_amount >= invitation_info.soft_cap {
       true
     } else {
       false

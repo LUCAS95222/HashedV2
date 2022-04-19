@@ -69,6 +69,7 @@ pub struct InvitationInfo {
   pub start_time: u64,
   pub end_time: u64,
   pub invitation_price: Uint128,
+  pub invitation_price_decimals: u8,
   pub game_token_distributions: GameTokenDistributions,
   pub main_token_distributed: bool
 }

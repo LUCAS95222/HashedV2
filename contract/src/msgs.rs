@@ -9,8 +9,8 @@ use crate::state::GameTokenDistributions;
 #[derive(Serialize, Deserialize, Clone, PartialEq, JsonSchema, Debug)]
 pub struct InstantiateMsg {
   pub token_code_id: u64,
-  pub main_token: Addr,
-  pub owner: Addr,
+  pub main_token: String,
+  pub owner: String,
   pub main_token_distributions: Vec<Distribution>,
 }
 
@@ -27,8 +27,7 @@ pub enum ExecuteMsg {
 
   UpdateConfig {
     token_code_id: Option<u64>,
-    main_token: Option<Addr>,
-    owner: Option<Addr>,
+    owner: Option<String>,
     main_token_distributions: Option<Vec<Distribution>>,
   },
 
@@ -37,6 +36,7 @@ pub enum ExecuteMsg {
     hard_cap: u64,
     user_cap: u64,
     invitation_price: Uint128,
+    invitation_price_decimals: u8,
     start_time: u64,
     end_time: u64,
     game_token_info: Cw20Info,
