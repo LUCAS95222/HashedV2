@@ -31,7 +31,7 @@ impl<'a> NftLockContract<'a> {
       })
     } else {
       Ok(OwnerOfResponse {
-        owner: "".to_string()
+        owner: "There is no owner".to_string()
       })
     }
   }
