@@ -1,0 +1,24 @@
+# C2X Contracts
+
+This repo is a collection of contracts for C2X.
+
+## Development
+
+### Testing
+
+Execute at each contract's directory.
+
+```sh
+RUST_BACKTRACE=2 cargo unit-test
+```
+
+### Compile
+
+Execute at the top directory.
+
+```sh
+docker run --rm -v "$(pwd)":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/rust-optimizer:0.12.5
+```
