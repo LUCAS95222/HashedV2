@@ -24,13 +24,16 @@
         "register_vesting_account": {
           "type": "object",
           "required": [
-            "address",
+            "addresses",
             "vesting_key",
             "vesting_schedule"
           ],
           "properties": {
-            "address": {
-              "type": "string"
+            "addresses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "master_address": {
               "type": [
@@ -62,12 +65,15 @@
         "deregister_vesting_account": {
           "type": "object",
           "required": [
-            "address",
+            "addresses",
             "vesting_key"
           ],
           "properties": {
-            "address": {
-              "type": "string"
+            "addresses": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "vesting_key": {
               "type": "string"

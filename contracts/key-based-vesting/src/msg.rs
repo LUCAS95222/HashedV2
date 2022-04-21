@@ -18,21 +18,21 @@ pub enum ExecuteMsg {
     //////////////////////////
     RegisterVestingAccount {
         master_address: Option<String>, // if given, the vesting account can be unregistered
-        address: String,
+        addresses: Vec<String>,
         vesting_key: String,
         vesting_schedule: VestingSchedule,
     },
     /// only available when master_address was set
     DeregisterVestingAccount {
-        address: String,
+        addresses: Vec<String>,
         vesting_key: String,
         vested_token_recipient: Option<String>,
         left_vesting_token_recipient: Option<String>,
     },
 
-    ////////////////////////
+    /////////////////////////////////
     /// VestingAccount Operations ///
-    ////////////////////////
+    /////////////////////////////////
     Claim {
         vesting_keys: Vec<String>,
         recipient: Option<String>,
@@ -45,7 +45,7 @@ pub enum Cw20HookMsg {
     /// Register vesting account with token transfer
     RegisterVestingAccount {
         master_address: Option<String>, // if given, the vesting account can be unregistered
-        address: String,
+        addresses: Vec<String>,
         vesting_key: String,
         vesting_schedule: VestingSchedule,
     },

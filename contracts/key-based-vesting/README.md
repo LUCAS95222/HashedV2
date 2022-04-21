@@ -12,7 +12,10 @@ This contract is to provide vesting account features for the both cw20 and nativ
 ```json
 {
   "register_vesting_account": {
-    "address": "terra1...ylya",         // 수신자 주소
+    "addresses": [          // 수신자 주소 목록
+      "terra1...ylya",
+      "terra1...80ae"
+    ],
     "master_address": "terra1...0r7f",  // 관리자 주소 (베스팅 스케쥴 취소 가능)
     "vesting_key": "test1",             // 중복되지 않는 베스팅 키
     "vesting_schedule": {               // 베스팅 스케쥴 종류
@@ -30,7 +33,7 @@ cw20 토큰으로 등록하기 위해서는 토큰을 보유한 계정이
 ```javascript
   const vesting_msg = {  // 베스팅 등록 메시지
     register_vesting_account: {
-      address: 'terra1...ylya',
+      addresses: [ 'terra1...ylya' ],
       master_address: 'terra1...0r7f',
       vesting_key: 'test4',
       vesting_schedule: {
@@ -153,8 +156,11 @@ cw20 토큰으로 등록하기 위해서는 토큰을 보유한 계정이
 ```json
 {
   "deregister_vesting_account": {
-    "address": "terra1...ylya",  // 받는 사람 주소
-    "vesting_key": "test1"       // 취소할 베스팅 키
+    "addresses": [          // 수신자 주소 목록
+      "terra1...ylya",
+      "terra1...80ae"
+    ],
+    "vesting_key": "test1"  // 취소할 베스팅 키
   }
 }
 ```
@@ -177,7 +183,7 @@ cw20 토큰으로 등록하기 위해서는 토큰을 보유한 계정이
 ```
 
 
-## Query
+## Query vesting_account
 
 등록된 베스팅 스케쥴 확인.
 
@@ -189,7 +195,6 @@ Input:
   }
 }
 ```
-
 Output:
 ```json
 {

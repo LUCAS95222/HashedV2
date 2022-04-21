@@ -41,7 +41,7 @@ fn register_vesting_account_with_native_token() {
     // zero amount vesting token
     let msg = ExecuteMsg::RegisterVestingAccount {
         master_address: None,
-        address: "addr0001".to_string(),
+        addresses: [ "addr0001".to_string() ].to_vec(),
         vesting_key: "test_register_native_zero".to_string(),
         vesting_schedule: VestingSchedule::LinearVesting {
             start_time: "100".to_string(),
@@ -63,7 +63,7 @@ fn register_vesting_account_with_native_token() {
     // normal amount vesting token
     let msg = ExecuteMsg::RegisterVestingAccount {
         master_address: None,
-        address: "addr0001".to_string(),
+        addresses: [ "addr0001".to_string() ].to_vec(),
         vesting_key: "test_register_native_normal".to_string(),
         vesting_schedule: VestingSchedule::LinearVesting {
             start_time: "100".to_string(),
@@ -96,7 +96,7 @@ fn register_vesting_account_with_native_token() {
     let res = execute(deps.as_mut(), env.clone(), info, msg.clone());
     match res.unwrap_err() {
         StdError::GenericErr { msg, .. } => {
-            assert_eq!(msg, "assert(deposit_amount == vesting_amount)")
+            assert_eq!(msg, "assert(deposit_amount == vesting_amount), required deposit_amount = 1000000")
         }
         _ => panic!("should not enter"),
     }
@@ -109,7 +109,7 @@ fn register_vesting_account_with_native_token() {
         vec![
             ("action", "register_vesting_account"),
             ("master_address", "",),
-            ("address", "addr0001"),
+            ("addresses", "[\"addr0001\"]"),
             ("vesting_key", "test_register_native_normal"),
             ("vesting_denom", "{\"native\":\"uusd\"}"),
             ("vesting_amount", "1000000"),
@@ -170,7 +170,7 @@ fn register_vesting_account_with_cw20_token() {
         amount: Uint128::new(1000000u128),
         msg: to_binary(&Cw20HookMsg::RegisterVestingAccount {
             master_address: None,
-            address: "addr0001".to_string(),
+            addresses: [ "addr0001".to_string() ].to_vec(),
             vesting_key: "test_register_cw20_zero".to_string(),
             vesting_schedule: VestingSchedule::LinearVesting {
                 start_time: "100".to_string(),
@@ -196,7 +196,7 @@ fn register_vesting_account_with_cw20_token() {
         amount: Uint128::new(1000000u128),
         msg: to_binary(&Cw20HookMsg::RegisterVestingAccount {
             master_address: None,
-            address: "addr0001".to_string(),
+            addresses: [ "addr0001".to_string() ].to_vec(),
             vesting_key: "test_register_cw20_invariant".to_string(),
             vesting_schedule: VestingSchedule::LinearVesting {
                 start_time: "100".to_string(),
@@ -211,7 +211,7 @@ fn register_vesting_account_with_cw20_token() {
     let res = execute(deps.as_mut(), env.clone(), info.clone(), msg);
     match res.unwrap_err() {
         StdError::GenericErr { msg, .. } => {
-            assert_eq!(msg, "assert(deposit_amount == vesting_amount)")
+            assert_eq!(msg, "assert(deposit_amount == vesting_amount), required deposit_amount = 999000")
         }
         _ => panic!("should not enter"),
     }
@@ -222,7 +222,7 @@ fn register_vesting_account_with_cw20_token() {
         amount: Uint128::new(1000000u128),
         msg: to_binary(&Cw20HookMsg::RegisterVestingAccount {
             master_address: None,
-            address: "addr0001".to_string(),
+            addresses: [ "addr0001".to_string() ].to_vec(),
             vesting_key: "test_register_cw20_valid".to_string(),
             vesting_schedule: VestingSchedule::LinearVesting {
                 start_time: "100".to_string(),
@@ -240,7 +240,7 @@ fn register_vesting_account_with_cw20_token() {
         vec![
             ("action", "register_vesting_account"),
             ("master_address", "",),
-            ("address", "addr0001"),
+            ("addresses", "[\"addr0001\"]"),
             ("vesting_key", "test_register_cw20_valid"),
             ("vesting_denom", "{\"cw20\":\"token0000\"}"),
             ("vesting_amount", "1000000"),
@@ -299,7 +299,10 @@ fn claim_native() {
     // valid amount
     let msg = ExecuteMsg::RegisterVestingAccount {
         master_address: None,
-        address: "addr0001".to_string(),
+        addresses: [
+            "addr0001".to_string(),
+            "addr0002".to_string(),
+        ].to_vec(),
         vesting_key: "test_claim_native_valid".to_string(),
         vesting_schedule: VestingSchedule::LinearVesting {
             start_time: "100".to_string(),
@@ -308,8 +311,8 @@ fn claim_native() {
         },
     };
 
-    let info = mock_info("addr0000", &[Coin::new(1000000u128, "uusd")]);
-    let _ = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let info = mock_info("addr0000", &[Coin::new(2000000u128, "uusd")]);
+    let _ = execute(deps.as_mut(), env.clone(), info, msg.clone()).unwrap();
 
     // make time to half claimable
     env.block.time = Timestamp::from_seconds(105);
@@ -401,7 +404,7 @@ fn claim_native() {
     // make time to half claimable
     env.block.time = Timestamp::from_seconds(110);
 
-    let res = execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+    let res = execute(deps.as_mut(), env.clone(), info, msg.clone()).unwrap();
     assert_eq!(
         res.messages,
         vec![SubMsg::new(BankMsg::Send {
@@ -430,7 +433,7 @@ fn claim_native() {
         from_binary::<VestingAccountResponse>(
             &query(
                 deps.as_ref(),
-                env,
+                env.clone(),
                 QueryMsg::VestingAccount {
                     address: "addr0001".to_string(),
                     start_after: None,
@@ -444,6 +447,33 @@ fn claim_native() {
             address: "addr0001".to_string(),
             vestings: vec![],
         }
+    );
+
+    // other claim
+    let info = mock_info("addr0002", &[]);
+    env.block.time = Timestamp::from_seconds(107);
+    let res = execute(deps.as_mut(), env.clone(), info.clone(), msg.clone()).unwrap();
+    assert_eq!(
+        res.messages,
+        vec![SubMsg::new(BankMsg::Send {
+            to_address: "addr0002".to_string(),
+            amount: vec![Coin {
+                denom: "uusd".to_string(),
+                amount: Uint128::new(700000u128),
+            }],
+        }),]
+    );
+    assert_eq!(
+        res.attributes,
+        vec![
+            Attribute::new("action", "claim"),
+            Attribute::new("address", "addr0002"),
+            Attribute::new("vesting_key", "test_claim_native_valid"),
+            Attribute::new("vesting_denom", "{\"native\":\"uusd\"}"),
+            Attribute::new("vesting_amount", "1000000"),
+            Attribute::new("vested_amount", "700000"),
+            Attribute::new("claim_amount", "700000"),
+        ],
     );
 }
 
@@ -468,7 +498,7 @@ fn claim_cw20() {
         amount: Uint128::new(1000000u128),
         msg: to_binary(&Cw20HookMsg::RegisterVestingAccount {
             master_address: None,
-            address: "addr0001".to_string(),
+            addresses: [ "addr0001".to_string() ].to_vec(),
             vesting_key: "test_claim_cw20_valid".to_string(),
             vesting_schedule: VestingSchedule::LinearVesting {
                 start_time: "100".to_string(),
@@ -641,7 +671,7 @@ fn query_vesting_account() {
     // native vesting
     let msg = ExecuteMsg::RegisterVestingAccount {
         master_address: None,
-        address: "addr0001".to_string(),
+        addresses: [ "addr0001".to_string() ].to_vec(),
         vesting_key: "test_query_native".to_string(),
         vesting_schedule: VestingSchedule::LinearVesting {
             start_time: "100".to_string(),
@@ -658,7 +688,7 @@ fn query_vesting_account() {
         amount: Uint128::new(1000000u128),
         msg: to_binary(&Cw20HookMsg::RegisterVestingAccount {
             master_address: None,
-            address: "addr0001".to_string(),
+            addresses: [ "addr0001".to_string() ].to_vec(),
             vesting_key: "test_query_cw20".to_string(),
             vesting_schedule: VestingSchedule::LinearVesting {
                 start_time: "100".to_string(),
