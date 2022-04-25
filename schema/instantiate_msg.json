@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "event_duration",
+    "init_timestamp",
+    "lockable_token_addr",
+    "max_lock_duration",
+    "min_lock_duration",
+    "reward_token_addr",
+    "reward_vesting_duration",
+    "weekly_divider",
+    "weekly_multiplier"
+  ],
+  "properties": {
+    "event_duration": {
+      "description": "Event duration in seconds",
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0.0
+    },
+    "init_timestamp": {
+      "description": "Timestamp when Contract will start accepting LP Token deposits",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "lock_duration_second": {
+      "description": "Min. lock period in seconds.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint32",
+      "minimum": 0.0
+    },
+    "lockable_token_addr": {
+      "description": "Lockable Token address",
+      "type": "string"
+    },
+    "max_lock_duration": {
+      "description": "Max. no. of weeks allowed for lockup",
+      "type": "integer",
+      "format": "uint16",
+      "minimum": 0.0
+    },
+    "min_lock_duration": {
+      "description": "Min. no. of weeks allowed for lockup",
+      "type": "integer",
+      "format": "uint16",
+      "minimum": 0.0
+    },
+    "reward_token_addr": {
+      "description": "Reward Token address",
+      "type": "string"
+    },
+    "reward_vesting_duration": {
+      "description": "Time duration for rewards is released sequentially from the time the event ends.",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "weekly_divider": {
+      "description": "Lockdrop reward divider",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "weekly_multiplier": {
+      "description": "Lockdrop reward multiplier",
+      "type": "integer",
+      "format": "uint16",
+      "minimum": 0.0
+    }
+  }
+}
