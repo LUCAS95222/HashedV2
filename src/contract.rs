@@ -274,7 +274,7 @@ pub fn handle_claim(
         )));
     }
 
-    //2022-04-25
+    //--2022-04-25
     let reward_token_balance = query_balance(&deps.querier, &env, config.reward_token_addr.to_string())?;
     if reward_token_balance < config.total_reward {
         return Err(StdError::generic_err(format!(
@@ -282,6 +282,7 @@ pub fn handle_claim(
             (config.total_reward - reward_token_balance)
         )));
     }
+    //--
 
     let lockup_reward = calculate_reward_for_lockup(
         state.total_weighted_score,
@@ -376,6 +377,7 @@ pub fn handle_unlock(
     ]))
 }
 
+//2022-04-25
 pub fn handle_update_reward(
     deps: DepsMut,
     env: Env,
