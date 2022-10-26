@@ -1,0 +1,194 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExecuteMsg",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "request_migrations"
+      ],
+      "properties": {
+        "request_migrations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MigrationReq"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "add_token"
+      ],
+      "properties": {
+        "add_token": {
+          "type": "object",
+          "required": [
+            "burner_token_addr",
+            "minter_token_addr",
+            "token_type"
+          ],
+          "properties": {
+            "burner_token_addr": {
+              "type": "string"
+            },
+            "minter_token_addr": {
+              "type": "string"
+            },
+            "token_type": {
+              "$ref": "#/definitions/TokenType"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "remove_token"
+      ],
+      "properties": {
+        "remove_token": {
+          "type": "object",
+          "required": [
+            "burner_token_addr"
+          ],
+          "properties": {
+            "burner_token_addr": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "update_tx_limit"
+      ],
+      "properties": {
+        "update_tx_limit": {
+          "type": "object",
+          "required": [
+            "count"
+          ],
+          "properties": {
+            "count": {
+              "type": "integer",
+              "format": "uint8",
+              "minimum": 0.0
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "record_migration_result"
+      ],
+      "properties": {
+        "record_migration_result": {
+          "type": "object",
+          "required": [
+            "id",
+            "status"
+          ],
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "message": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "minter_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "format": "uint64",
+              "minimum": 0.0
+            },
+            "minter_tx_hash": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "status": {
+              "type": "integer",
+              "format": "int16"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "required": [
+        "update_owner"
+      ],
+      "properties": {
+        "update_owner": {
+          "type": "object",
+          "required": [
+            "new_owner"
+          ],
+          "properties": {
+            "new_owner": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  ],
+  "definitions": {
+    "MigrationReq": {
+      "type": "object",
+      "required": [
+        "asset",
+        "to"
+      ],
+      "properties": {
+        "amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "asset": {
+          "type": "string"
+        },
+        "nft_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "to": {
+          "type": "string"
+        }
+      }
+    },
+    "TokenType": {
+      "type": "string",
+      "enum": [
+        "cw20",
+        "cw721"
+      ]
+    }
+  }
+}

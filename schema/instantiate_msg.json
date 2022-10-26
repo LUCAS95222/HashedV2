@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "supported_tokens"
+  ],
+  "properties": {
+    "owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "supported_tokens": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/SupportedToken"
+      }
+    }
+  },
+  "definitions": {
+    "SupportedToken": {
+      "type": "object",
+      "required": [
+        "burner_token_addr",
+        "minter_token_addr",
+        "token_type"
+      ],
+      "properties": {
+        "burner_token_addr": {
+          "type": "string"
+        },
+        "minter_token_addr": {
+          "type": "string"
+        },
+        "token_type": {
+          "$ref": "#/definitions/TokenType"
+        }
+      }
+    },
+    "TokenType": {
+      "type": "string",
+      "enum": [
+        "native",
+        "cw20",
+        "cw721"
+      ]
+    }
+  }
+}
